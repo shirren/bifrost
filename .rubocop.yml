@@ -1,0 +1,34 @@
+ClassLength:
+  Max: 150
+
+LineLength:
+  Max: 200
+
+MethodLength:
+  CountComments: false  # count full line comments?
+  Max: 20
+
+Metrics/AbcSize:
+  Max: 30
+
+Encoding:
+  Description: 'Use UTF-8 as the source file encoding.'
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Lint/UnusedBlockArgument:
+  Enabled: false
+
+AllCops:
+  Exclude:
+    - bin/**/*
+    - db/**/*
+    - config/**/*
+    - Rakefile
+    - script/**/*
+    - spec/factories/**/*
+    - spec/test_app/**/*
+    - node_modules/**/*
+    - !ruby/regexp /old_and_unused\.rb$/
