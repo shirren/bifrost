@@ -69,6 +69,12 @@ describe Bifrost::Topic do
       subscriber = Bifrost::Subscriber.new('non_existent_subscriber')
       expect(new_topic.remove_subscriber(subscriber)).to be_falsey
     end
+
+    it 'should not be able to add a duplicate subscriber' do
+      subscriber = Bifrost::Subscriber.new('another_new_subscriber')
+      expect(new_topic.add_subscriber(subscriber)).to be_truthy
+      expect { new_topic.add_subscriber(subscriber) }.to raise_error(Bifrost::Exceptions::DuplicateSubscriberError)
+    end
   end
 
   it 'should not accept names with spaces in them' do

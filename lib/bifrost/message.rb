@@ -19,10 +19,11 @@ module Bifrost
     def post_to(topic)
       if topic.exists?
         message = Azure::ServiceBus::BrokeredMessage.new(subject, message: body)
-        subscription = bus.send_topic_message(topic.name, message)
-        return true if subscription
+        bus.send_topic_message(topic.name, message)
+        true
+      else
+        false
       end
-      false
     end
   end
 end

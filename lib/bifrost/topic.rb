@@ -1,5 +1,6 @@
 require 'azure'
 require_relative 'entity'
+require_relative 'exceptions/duplicate_subscriber_error'
 
 module Bifrost
   # Topics are central to the pub/sub system in the Bifrost. All messages must be delivered
@@ -45,7 +46,11 @@ module Bifrost
     # A new subscriber can be added to a topic
     def add_subscriber(subscriber)
       if exists?
-        bus.create_subscription(name, subscriber.name)
+        begin
+          bus.create_subscription(name, subscriber.name)
+        rescue Azure::Core::Http::HTTPError => e
+          raise Bifrost::Exceptions::DuplicateSubscriberError, "Duplicate subscriber for topic #{name}" if e.status_code == 409
+        end
         true
       else
         false
