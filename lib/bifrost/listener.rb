@@ -2,6 +2,7 @@ require 'azure'
 require_relative 'entity'
 
 module Bifrost
+  # This class is used to read messages from the subscriber
   class Listener < Bifrost::Entity
     attr_reader :topic_name, :subscriber_name
 
@@ -19,9 +20,7 @@ module Bifrost
         # bus will wait for a pre-defined period before which the request times out. For this
         # reason we use the nested loop, because we do not want to innundate the bus with too
         # many requests too quickly
-        while read_message(proc)
-          sleep(ENV['QUEUE_DELAY'] || 10)
-        end
+        sleep(ENV['QUEUE_DELAY'] || 10) while read_message(proc)
       end
     end
 
@@ -35,7 +34,7 @@ module Bifrost
         bus.delete_subscription_message(message)
       end
       true
-    rescue StandardError => e
+    rescue StandardError
       # TODO: Log all standard errors
       false # TODO: Fix this
     end
