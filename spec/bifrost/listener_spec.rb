@@ -15,7 +15,7 @@ describe Bifrost::Listener do
     topic.save
     subscriber = Bifrost::Subscriber.new('subscriber')
     topic.add_subscriber(subscriber)
-    msg = Bifrost::Message.new('subject', data: 2)
+    msg = Bifrost::Message.new(body = [item1: { data: 2 }, item2: { more_data: 3 }])
     msg.post_to(topic)
     listener.process do |message|
       puts "Received: message #{message}"

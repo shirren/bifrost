@@ -10,6 +10,11 @@ describe Bifrost::Message do
   it { is_expected.to respond_to(:body) }
   it { is_expected.to respond_to(:post_to) }
 
+  it 'should be able to auto generate a subject' do
+    new_message = Bifrost::Message.new(body = { content: 'some data' })
+    expect(new_message).to_not be_nil
+  end
+
   it 'should be postable to a valid topic' do
     topic = Bifrost::Topic.new('valid-topic')
     topic.save

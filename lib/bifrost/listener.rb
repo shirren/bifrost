@@ -30,13 +30,21 @@ module Bifrost
     def read_message(proc)
       message = bus.receive_subscription_message(topic_name, subscriber_name)
       if message
-        proc.call(message.properties['message'])
-        bus.delete_subscription_message(message)
+        # We should call the callback function in a separate thread. We do not want
+        # a long running process to block this piece of infrastructure. We do not need
+        # to call thread.join because this method is called in an infinite loop.
+        # Also we do not need to exception handle the proc.call as it is silently handled by Ruby
+        Thread.new do
+          proc.call(message.properties['message'])
+          bus.delete_subscription_message(message)
+        end
       end
       true
     rescue StandardError
+      # We suppress exceptions to make this library more fault tolerant. The intetnet
+      # can be unpredictable yeah?
       # TODO: Log all standard errors
-      false # TODO: Fix this
+      false
     end
   end
 end

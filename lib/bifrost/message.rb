@@ -9,8 +9,8 @@ module Bifrost
 
     # A message must have a valid subject and body. The service
     # bus is initialised in the Entity class
-    def initialize(subject, body)
-      @subject ||= subject
+    def initialize(subject = nil, body)
+      @subject = subject || SecureRandom.base64
       @body ||= body
       super()
     end
