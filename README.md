@@ -79,7 +79,7 @@ listener.process do |message|
 end
 ```
 
-# TODO: How do we pass multiple listeners into the processing call? As the process is a blocking call?
+**TODO: How do we pass multiple listeners into the processing call? As the process is a blocking call?**
 
 #Contributing
 
