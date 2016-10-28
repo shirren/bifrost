@@ -7,8 +7,16 @@ describe Bifrost::Message do
   subject(:message) { Bifrost::Message.new('subscriber_name', content: 'some data') }
 
   it { is_expected.to respond_to(:subject) }
+  it { is_expected.to respond_to(:status) }
+  it { is_expected.to respond_to(:message_id) }
   it { is_expected.to respond_to(:body) }
   it { is_expected.to respond_to(:post_to) }
+
+  context 'which is initialized' do
+    it 'should be in an undelivered status' do
+      expect(message.status).to eq(:undelivered)
+    end
+  end
 
   it 'should be able to auto generate a subject' do
     new_message = Bifrost::Message.new(body = { content: 'some data' })
@@ -20,6 +28,8 @@ describe Bifrost::Message do
     topic.save
     topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
     expect(message.post_to(topic)).to be_truthy
+    expect(message.status).to eq(:delivered)
+    expect(message.message_id).not_to be_nil
     topic.delete
   end
 
