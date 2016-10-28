@@ -70,8 +70,6 @@ message.post_to(topic)
 This function returns a `true` or `false` indicating the success of the message delivery. This method is synchronous. Each message has an
 identifier which gets sets upon successful delivery only.
 
-# TODO: Set the message id on successful delivery of message.
-
 To setup a listener for messages sent to a particular subscriber;
 
 ```ruby
