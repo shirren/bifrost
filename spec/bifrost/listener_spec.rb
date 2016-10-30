@@ -13,18 +13,18 @@ describe Bifrost::Listener do
   it { is_expected.to respond_to(:subscriber_name) }
 
   it 'should not except non procs in last argument' do
-    expect { Bifrost::Listener.new('topic', 'subscriber', 'x') }.to raise_error( Bifrost::Exceptions::UnsupportedLambdaError )
+    expect { Bifrost::Listener.new('topic', 'subscriber', 'x') }.to raise_error(Bifrost::Exceptions::UnsupportedLambdaError)
   end
 
-  skip 'should be able to listen for messages' do
+  it 'should be able to listen for messages' do
     topic = Bifrost::Topic.new('topic')
-    # topic.save
-    # subscriber = Bifrost::Subscriber.new('subscriber')
+    topic.save
+    subscriber = Bifrost::Subscriber.new('subscriber')
     # topic.add_subscriber(subscriber)
     msg = Bifrost::Message.new(body = [item1: { data: 2 }, item2: { more_data: 3 }])
     msg.post_to(topic)
     expect(msg.status).to eq(:delivered)
     expect(msg.message_id).not_to be_nil
-    listener.run
+    listener.async.run
   end
 end
