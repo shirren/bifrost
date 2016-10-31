@@ -1,7 +1,7 @@
 require 'bifrost/message'
 require 'bifrost/topic'
 require 'bifrost/subscriber'
-require 'bifrost/supervisor'
+require 'bifrost/manager'
 require 'bifrost/worker'
 
 # Bifrost is a pub/sub gem built on top of the Azure MessageBus system

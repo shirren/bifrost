@@ -34,6 +34,7 @@ describe Bifrost::Worker do
     msg.post_to(topic)
     expect(msg.status).to eq(:delivered)
     expect(msg.message_id).not_to be_nil
-    listener.async.run
+    worker.async.run
+    sleep
   end
 end

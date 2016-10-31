@@ -1,5 +1,5 @@
 require 'azure'
-require 'celluloid'
+require 'celluloid/current'
 require_relative 'entity'
 require_relative 'exceptions/unsupported_lambda_error'
 
@@ -10,13 +10,13 @@ module Bifrost
   class Worker < Bifrost::Entity
     include Celluloid
 
-    attr_reader :topic_name, :subscriber_name, :proc
+    attr_reader :topic_name, :subscriber_name, :callback
 
-    def initialize(topic_name, subscriber_name, proc)
-      raise Bifrost::Exceptions::UnsupportedLambdaError, 'not a proc' unless proc.respond_to?(:call)
+    def initialize(topic_name, subscriber_name, callback)
+      raise Bifrost::Exceptions::UnsupportedLambdaError, 'not a proc' unless callback.respond_to?(:call)
       @topic_name ||= topic_name
       @subscriber_name ||= subscriber_name
-      @proc ||= proc
+      @callback ||= callback
       super()
     end
 
@@ -32,7 +32,7 @@ module Bifrost
     # Workers have a friendly name which is a combination of the topic and subscriber name
     # which in the operational environment should be unique
     def to_s
-      "#{topic_name}-#{subscriber_name}"
+      Worker.supervisor_handle(topic_name, subscriber_name)
     end
 
     # Utlity method to get the name of the worker as a symbol
@@ -40,20 +40,23 @@ module Bifrost
       to_s.to_sym
     end
 
+    # A worker can tell you what it's friendly name will be, this is in order for supervision
+    def self.supervisor_handle(topic_name, subscriber_name)
+      "#{topic_name}-#{subscriber_name}"
+    end
+
     private
 
     # Actual processing of the message
     def read_message
-      message = bus.receive_subscription_message(topic_name, subscriber_name, timeout: ENV['TIMEOUT'] || 5)
+      message = bus.receive_subscription_message(topic_name, subscriber_name, timeout: ENV['TIMEOUT'] || 10)
+      puts "message is nil #{message.nil?}"
       if message
-        proc.call(message.properties['message'])
-        bus.delete_subscription_message(message)
+        @callback.call(message.properties['message'])
+        # bus.delete_subscription_message(message)
+      else
+        puts "no message dear"
       end
-    rescue StandardError => e
-      # We suppress exceptions to make this library more fault tolerant. The intetnet
-      # can be unpredictable yeah?
-      # TODO: Log all standard errors instead of puts
-      puts e
     end
   end
 end
