@@ -63,23 +63,58 @@ To post a message to a topic;
 
 ```ruby
 topic = Bifrost::Topic.new('topic_name')
-message = Bifrost::Message.new(body = { content: 'some data' })
+message = Bifrost::Message.new(content: 'some data')
 message.post_to(topic)
 ```
 
 This function returns a `true` or `false` indicating the success of the message delivery. This method is synchronous. Each message has an
 identifier which gets sets upon successful delivery only.
 
-To setup a listener for messages sent to a particular subscriber;
+A message can also be optionally published with a subject;
 
 ```ruby
-listener = Bifrost::Listener.new('topic', 'subscriber')
-listener.process do |message|
-  # Do something with the message
+topic = Bifrost::Topic.new('topic_name')
+message = Bifrost::Message.new(content: 'some data', 'message subject')
+message.post_to(topic)
+```
+
+Subscribers in the Bifrost are [actors](http://http://doc.akka.io/docs/akka/2.4/general/actors.html), these actors run in
+their own threads. At present the Bifrost does not support thread pools, this is something we are investigating and are
+hoping to add at some point. In the Bifrost each actor is referred to as a `worker`. A worker is designed to receive
+messages published to a particular topic with a specific subscriber in mind (refer to the fan-out comment earlier).
+
+Workers are added to the Bifrost via the manager. The manager is what activates the workers in the Bifrost environment.
+You can use multiple managers if you like at any given point in time to orchestrate the workers. These managers and workers
+are only allowed to work in a single namespace at a time.
+
+To setup a single worker to receive messages sent to a particular topic and subscriber;
+
+```ruby
+manager = Bifrost::Manager.new
+manager.add('topic_name', 'subscriber_name', proc { |m| puts "Received: message #{m}" })
+manager.run
 end
 ```
 
-**TODO: How do we pass multiple listeners into the processing call? As the process is a blocking call?**
+To setup multiple workers to receive messages;
+
+```ruby
+manager = Bifrost::Manager.new
+manager.add('topic_name', 'subscriber_name', proc { |m| puts "Received: message #{m}" })
+manager.add('another_topic_name', 'another_subscriber_name', proc { |m| puts "Received: message #{m}" })
+manager.run
+end
+```
+
+Workers in the Bifrost are self healing, when an actor dies the manager receives a message alerting the manager
+to the failure, the worker then restarts after the failure.
+
+**We hope to introduce custom lambda functions in the future to support custom actions when a worker dies**
+
+#Is it any good?
+
+We are currently [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this product in our production
+environment. We will no doubt find issues and rectify this over time.
 
 #Contributing
 
