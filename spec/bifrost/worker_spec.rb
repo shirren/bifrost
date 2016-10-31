@@ -6,8 +6,8 @@ require 'bifrost/subscriber'
 require 'bifrost/worker'
 
 describe Bifrost::Worker do
-  let(:proc) { Proc.new { |m| puts "Received: message #{m}" }}
-  subject(:worker) { Bifrost::Worker.new('topic', 'subscriber', proc) }
+  let(:cb) { proc { |m| puts "Received: message #{m}" } }
+  subject(:worker) { Bifrost::Worker.new('topic', 'subscriber', cb) }
 
   it { is_expected.to respond_to(:topic_name) }
   it { is_expected.to respond_to(:subscriber_name) }
@@ -29,8 +29,8 @@ describe Bifrost::Worker do
     topic = Bifrost::Topic.new('topic')
     topic.save
     subscriber = Bifrost::Subscriber.new('subscriber')
-    # topic.add_subscriber(subscriber)
-    msg = Bifrost::Message.new(body = [item1: { data: 2 }, item2: { more_data: 3 }])
+    topic.add_subscriber(subscriber)
+    msg = Bifrost::Message.new([item1: { data: 2 }, item2: { more_data: 3 }])
     msg.post_to(topic)
     expect(msg.status).to eq(:delivered)
     expect(msg.message_id).not_to be_nil

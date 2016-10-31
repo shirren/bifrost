@@ -13,8 +13,8 @@ describe Bifrost::Topic do
   it { is_expected.to respond_to(:remove_subscriber) }
 
   it 'should not support blank topic names' do
-    invalid_topic = Bifrost::Topic.new( nil )
-    expect { invalid_topic.save }.to raise_error( TypeError )
+    invalid_topic = Bifrost::Topic.new(nil)
+    expect { invalid_topic.save }.to raise_error(TypeError)
   end
 
   context 'for an undefined topic' do

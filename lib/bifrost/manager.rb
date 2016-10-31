@@ -23,39 +23,24 @@ module Bifrost
         worker = @supervisor.actors.last
         # Link the worker to the supervisor so if the worker misbehaves the supervisor is alerted
         # to this poor behaviour, the supervisor decides how to handle recovery
-        self.link(worker)
+        link(worker)
       end
     end
 
-    # When we run all the listeners are processed in there own thread. This run also blocks to make sure
+    # When we run all the workers as actors in their own threads. This run also blocks to make sure
     # the spawned threads remain operational indefinitely
-    def run(options = {})
-      @supervisor.actors.each do |worker|
-        worker.async.run
-      end
-
+    def run
+      @supervisor.actors.each { |w| w.async.run }
       # Put the supervisor thread to sleep indefinitely # Better way?
       loop do
         sleep(5)
       end
-        # We give the workers a breather when they start up
-      #   sleep(5)
-      # end
-      # container = Celluloid::Supervision::Container.new do
-      #   puts "Init complete"
-      # end
-      # actor = container.add(
-      #   type: Worker,
-      #   as: Worker.supervisor_handle('topic', 'subscriber'),
-      #   args: ['topic', 'subscriber', proc]
-      # )
-      # Celluloid::Supervision::Container.run!
     end
 
     private
 
     # This callback function fires when an worker dies
-    def  worker_died(worker, reason)
+    def worker_died(worker, reason)
       # TODO: Log this instead
       puts "#{worker.inspect} has died: #{reason.class}"
       worker.async.run

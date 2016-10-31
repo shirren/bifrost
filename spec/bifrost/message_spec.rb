@@ -4,7 +4,7 @@ require 'bifrost/topic'
 require 'bifrost/subscriber'
 
 describe Bifrost::Message do
-  subject(:message) { Bifrost::Message.new('subscriber_name', content: 'some data') }
+  subject(:message) { Bifrost::Message.new({ content: 'some data' }, 'subscriber_name') }
 
   it { is_expected.to respond_to(:subject) }
   it { is_expected.to respond_to(:status) }
@@ -19,7 +19,7 @@ describe Bifrost::Message do
   end
 
   it 'should be able to auto generate a subject' do
-    new_message = Bifrost::Message.new(body = { content: 'some data' })
+    new_message = Bifrost::Message.new(content: 'some data')
     expect(new_message).to_not be_nil
   end
 

@@ -50,12 +50,9 @@ module Bifrost
     # Actual processing of the message
     def read_message
       message = bus.receive_subscription_message(topic_name, subscriber_name, timeout: ENV['TIMEOUT'] || 10)
-      puts "message is nil #{message.nil?}"
       if message
-        @callback.call(message.properties['message'])
-        # bus.delete_subscription_message(message)
-      else
-        puts "no message dear"
+        callback.call(message.properties['message'])
+        bus.delete_subscription_message(message)
       end
     end
   end
