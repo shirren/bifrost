@@ -7,7 +7,8 @@ module Bifrost
   class Manager
     include Celluloid
 
-    # The supervisor needs to be notified when a worker dies
+    # The supervisor needs to be notified when a worker dies, it also needs to
+    # protect itself from harm
     trap_exit :worker_died
 
     # A supervised worker can be added to the current collection of supervised workers
@@ -17,13 +18,12 @@ module Bifrost
         raise InvalidWorkerDefinitionError, 'Invalid worker'
       else
         @supervisor = Worker.supervise(
-          as: Worker.supervisor_handle(topic_name, subscriber_name),
+          as:   Worker.supervisor_handle(topic_name, subscriber_name),
           args: [topic_name, subscriber_name, proc]
         )
-        worker = @supervisor.actors.last
         # Link the worker to the supervisor so if the worker misbehaves the supervisor is alerted
         # to this poor behaviour, the supervisor decides how to handle recovery
-        link(worker)
+        link(@supervisor.actors.last)
       end
     end
 
@@ -33,6 +33,7 @@ module Bifrost
       @supervisor.actors.each { |w| w.async.run }
       # Put the supervisor thread to sleep indefinitely # Better way?
       loop do
+        # TODO: Better way?
         sleep(5)
       end
     end
@@ -43,7 +44,6 @@ module Bifrost
     def worker_died(worker, reason)
       # TODO: Log this instead
       puts "#{worker.inspect} has died: #{reason.class}"
-      worker.async.run
     end
   end
 end
