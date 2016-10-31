@@ -7,7 +7,7 @@ require 'bifrost/worker'
 
 describe Bifrost::Worker do
   let(:proc) { Proc.new { |m| puts "Received: message #{m}" }}
-  subject(:listener) { Bifrost::Worker.new('topic', 'subscriber', proc) }
+  subject(:worker) { Bifrost::Worker.new('topic', 'subscriber', proc) }
 
   it { is_expected.to respond_to(:topic_name) }
   it { is_expected.to respond_to(:subscriber_name) }
@@ -15,6 +15,14 @@ describe Bifrost::Worker do
   it 'should not except non procs in last argument' do
     expect { Bifrost::Worker.new('topic', 'subscriber', 'x') }
       .to raise_error(Bifrost::Exceptions::UnsupportedLambdaError)
+  end
+
+  it 'should have a friendly string name' do
+    expect(worker.to_s).to eq("#{worker.topic_name}-#{worker.subscriber_name}")
+  end
+
+  it 'should have a friendly symbol name' do
+    expect(worker.to_sym).to eq(worker.to_s.to_sym)
   end
 
   skip 'should be able to listen for messages' do

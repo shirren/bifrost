@@ -29,6 +29,17 @@ module Bifrost
       end
     end
 
+    # Workers have a friendly name which is a combination of the topic and subscriber name
+    # which in the operational environment should be unique
+    def to_s
+      "#{topic_name}-#{subscriber_name}"
+    end
+
+    # Utlity method to get the name of the worker as a symbol
+    def to_sym
+      to_s.to_sym
+    end
+
     private
 
     # Actual processing of the message
