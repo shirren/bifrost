@@ -93,7 +93,6 @@ To setup a single worker to receive messages sent to a particular topic and subs
 manager = Bifrost::Manager.new
 manager.add('topic_name', 'subscriber_name', proc { |m| puts "Received: message #{m}" })
 manager.run
-end
 ```
 
 To setup multiple workers to receive messages;
@@ -103,7 +102,6 @@ manager = Bifrost::Manager.new
 manager.add('topic_name', 'subscriber_name', proc { |m| puts "Received: message #{m}" })
 manager.add('another_topic_name', 'another_subscriber_name', proc { |m| puts "Received: message #{m}" })
 manager.run
-end
 ```
 
 Workers in the Bifrost are self healing, when an actor dies the manager receives a message alerting the manager
