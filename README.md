@@ -8,7 +8,7 @@ can be used to commuicate with Azure via the Azure SDK.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'bifrost'
+gem 'bi-frost'
 ```
 
 And then execute:

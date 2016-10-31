@@ -5,7 +5,7 @@ require 'bifrost/version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = 'bifrost'
+  s.name        = 'bi-frost'
   s.version     = Bifrost::VERSION
   s.authors     = ['Shirren Premaratne']
   s.email       = ['shirren@filmpond.com']
