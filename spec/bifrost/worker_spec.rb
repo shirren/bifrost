@@ -9,8 +9,8 @@ describe Bifrost::Worker do
   let(:cb) { proc { |m| puts "Received: message #{m}" } }
   subject(:worker) { Bifrost::Worker.new('topic', 'subscriber', cb) }
 
-  it { is_expected.to respond_to(:topic_name) }
-  it { is_expected.to respond_to(:subscriber_name) }
+  it { is_expected.to respond_to(:topic) }
+  it { is_expected.to respond_to(:subscriber) }
 
   it 'should not except non procs in last argument' do
     expect { Bifrost::Worker.new('topic', 'subscriber', 'x') }
@@ -18,7 +18,12 @@ describe Bifrost::Worker do
   end
 
   it 'should have a friendly string name' do
-    expect(worker.to_s).to eq("#{worker.topic_name}-#{worker.subscriber_name}")
+    expect(worker.to_s).to eq("#{worker.topic}#{worker.subscriber}")
+  end
+
+  it 'should downcase the friendly name' do
+    another_worker = Bifrost::Worker.new('toPic', 'subScriber', cb)
+    expect(another_worker.to_s).to eq("#{another_worker.topic.downcase}#{another_worker.subscriber.downcase}")
   end
 
   it 'should have a friendly symbol name' do

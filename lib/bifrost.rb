@@ -8,11 +8,10 @@ require 'bifrost/worker'
 module Bifrost
   # Simple utlity that creates a topic and a single subscriber for the given
   # topic. The topic is returned
-  def self.create_topic_with_subscriber(topic_name, sub_name)
-    topic = Bifrost::Topic.new(topic_name)
+  def self.create_topic_with_subscriber(topic, subscriber)
+    topic = Bifrost::Topic.new(topic)
     topic.save
-    subscriber = Bifrost::Subscriber.new(sub_name)
-    topic.add_subscriber(subscriber)
+    topic.add_subscriber(Bifrost::Subscriber.new(subscriber))
     topic
   end
 end

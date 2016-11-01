@@ -9,20 +9,26 @@ module Bifrost
   # combination one at a time
   class Worker < Bifrost::Entity
     include Celluloid
+    include Celluloid::Internals::Logger
+    include Celluloid::Notifications
 
-    attr_reader :topic_name, :subscriber_name, :callback
+    attr_reader :topic, :subscriber, :callback
 
-    def initialize(topic_name, subscriber_name, callback)
-      raise Bifrost::Exceptions::UnsupportedLambdaError, 'not a proc' unless callback.respond_to?(:call)
-      @topic_name ||= topic_name
-      @subscriber_name ||= subscriber_name
+    # Initialise the worker/actor. This actually starts the worker by implicitly calling the run method
+    def initialize(topic, subscriber, callback)
+      raise Bifrost::Exceptions::UnsupportedLambdaError, 'callback is not a proc' unless callback.respond_to?(:call)
+      @topic ||= topic
+      @subscriber ||= subscriber
       @callback ||= callback
       super()
+      info("Worker #{to_sym} starting up...")
+      publish('worker_ready', topic, subscriber)
     end
 
     # This method starts the actor, which runs in an infinite loop. This means the worker should
     # not terminate, but if it does, the supervisor will make sure it restarts
     def run
+      info("Worker #{to_sym} running...")
       loop do
         read_message
         sleep(ENV['QUEUE_DELAY'] || 10)
@@ -32,7 +38,7 @@ module Bifrost
     # Workers have a friendly name which is a combination of the topic and subscriber name
     # which in the operational environment should be unique
     def to_s
-      Worker.supervisor_handle(topic_name, subscriber_name)
+      Worker.handle(topic, subscriber)
     end
 
     # Utlity method to get the name of the worker as a symbol
@@ -41,15 +47,15 @@ module Bifrost
     end
 
     # A worker can tell you what it's friendly name will be, this is in order for supervision
-    def self.supervisor_handle(topic_name, subscriber_name)
-      "#{topic_name}-#{subscriber_name}"
+    def self.handle(topic, subscriber)
+      "#{topic.downcase}#{subscriber.downcase}"
     end
 
     private
 
     # Actual processing of the message
     def read_message
-      message = bus.receive_subscription_message(topic_name, subscriber_name, timeout: ENV['TIMEOUT'] || 10)
+      message = bus.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
       if message
         callback.call(message.properties['message'])
         bus.delete_subscription_message(message)

@@ -83,7 +83,7 @@ describe Bifrost::Topic do
   end
 
   it 'should not accept names with spaces in them' do
-    invalid_topic_name = Bifrost::Topic.new('topic name')
-    expect { invalid_topic_name.save }.to raise_error(URI::InvalidURIError)
+    invalid_topic = Bifrost::Topic.new('topic name')
+    expect { invalid_topic.save }.to raise_error(URI::InvalidURIError)
   end
 end
