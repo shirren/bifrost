@@ -1,3 +1,4 @@
+require 'bifrost/entity'
 require 'bifrost/message'
 require 'bifrost/topic'
 require 'bifrost/subscriber'
@@ -13,5 +14,10 @@ module Bifrost
     topic.save
     topic.add_subscriber(Bifrost::Subscriber.new(subscriber))
     topic
+  end
+
+  # Creates a manager instance
+  def self.manager
+    Bifrost::Manager.new
   end
 end

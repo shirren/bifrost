@@ -8,6 +8,6 @@ describe Bifrost::Manager do
 
   skip 'should be able to help a faulty actor heal' do
     manager.add('topicX', 'blah', proc { |m| puts "Secondary Received: message #{m}" })
-    manager.run!
+    manager.run
   end
 end

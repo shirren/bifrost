@@ -31,29 +31,40 @@ module Bifrost
 
     # When we run all the workers as actors in their own threads. This run also blocks to make sure
     # the spawned threads remain operational indefinitely
-    def run!
-      # Put the supervisor thread to sleep indefinitely # Better way?
+    def run
+      # Put the supervisor thread to sleep indefinitely
       loop do
-        # TODO: Better way?
-        sleep(5)
+        # TODO: Perhaps there is a better way?
+        sleep(60)
       end
     end
 
-    # This callback is fired when the worker signals it is ready to recommence work
+    # This callback is fired when the worker signals it is ready to commence work after initialisation or
+    # recommence after recovering from a failure.
+    # When a worker completes initialisation it can take a while for the worker to be registered as an Actor
+    # in Celluloid, for this reason we need need to put a minor delay in the initialisation procedure
     def worker_ready(*args)
       info("Worker bootstrapping with #{args}...")
-      worker_handle = Worker.handle(args[1], args[2])
-      sleep(2)
-      worker = Celluloid::Actor[worker_handle.to_sym]
+      sleep(ENV['ACTOR_BOOTSTRAP_DELAY'] || 2) # TODO: Perhaps there is a better way?
+      worker = get_worker(args[1], args[2])
       if worker
         # Link the worker to the supervisor so if the worker misbehaves the supervisor is alerted
         # to this poor behaviour, the supervisor decides how to handle recovery
         link(worker)
         worker.async.run
+      else
+        error("Worker bootstrap failure with #{args}")
       end
     end
 
     private
+
+    # Retrieve a worker through the supervisory structure, this can take a while as the worker might
+    # be going through a restart procedure by the actor framework
+    def get_worker(topic, subscriber)
+      handle = Worker.handle(topic, subscriber)
+      Celluloid::Actor[handle.to_sym]
+    end
 
     # This callback function fires when an worker dies
     def worker_died(worker, reason)
