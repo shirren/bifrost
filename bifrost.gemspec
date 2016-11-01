@@ -10,17 +10,18 @@ Gem::Specification.new do |s|
   s.authors     = ['Shirren Premaratne']
   s.email       = ['shirren@filmpond.com']
   s.homepage    = 'https://github.com/filmpond/bifrost'
-  s.summary     = 'Bifrost is a simple pub/sub messaging wrapper component.'
-  s.description = 'Topic definitions should occur via the Bifrost. Subscriptions should take place via the Bifrost. ' \
-                  'Therefore all messages need to transit through the Bifrost'
+  s.summary     = 'Bifrost is a pub/sub wrapper library which uses the Azure message bus and actors.'
+  s.description = 'Bifrost is a pub/sub wrapper library which uses Azure message bus and actors.'
+  s.files       = Dir['{app,config,db,lib}/**/*', 'Rakefile', 'README.md']
+  s.test_files  = Dir['spec/**/*']
+  s.licenses    = ['MIT']
 
-  s.files      = Dir['{app,config,db,lib}/**/*', 'Rakefile', 'README.md']
-  s.test_files = Dir['spec/**/*']
+  s.required_ruby_version = ">= 2.0"
 
   s.add_runtime_dependency 'azure', '~> 0.7.6'
   s.add_runtime_dependency 'celluloid', '~> 0.17.3'
 
-  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'rubocop', '~> 0'
 
   s.add_development_dependency 'byebug', '~> 9.0'
   s.add_development_dependency 'dotenv', '~> 2.1'
