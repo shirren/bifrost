@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bifrost/subscriber'
+require 'bifrost'
 
 describe Bifrost::Subscriber do
   subject(:subscriber) { Bifrost::Subscriber.new('subscriber_name') }

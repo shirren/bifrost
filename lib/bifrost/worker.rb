@@ -7,7 +7,7 @@ module Bifrost
   # This class is used to read messages from the subscriber, and process the messages one
   # by one. This class is a worker/actor which focusses on processes a single topic/subscriber
   # combination one at a time
-  class Worker < Bifrost::Entity
+  class Worker < Entity
     include Celluloid
     include Celluloid::Internals::Logger
     include Celluloid::Notifications
@@ -55,10 +55,10 @@ module Bifrost
 
     # Actual processing of the message
     def read_message
-      message = bus.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
+      message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
       if message
         callback.call(message.properties['message'])
-        bus.delete_subscription_message(message)
+        @bus.interface.delete_subscription_message(message)
       end
     end
   end

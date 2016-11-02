@@ -1,7 +1,5 @@
 require 'spec_helper'
-require 'bifrost/message'
-require 'bifrost/topic'
-require 'bifrost/subscriber'
+require 'bifrost'
 
 describe Bifrost::Message do
   subject(:message) { Bifrost::Message.new({ content: 'some data' }, 'subscriber_name') }

@@ -1,9 +1,6 @@
 require 'spec_helper'
 require 'bifrost/exceptions/unsupported_lambda_error'
-require 'bifrost/message'
-require 'bifrost/topic'
-require 'bifrost/subscriber'
-require 'bifrost/worker'
+require 'bifrost'
 
 describe Bifrost::Worker do
   let(:cb) { proc { |m| puts "Received: message #{m}" } }

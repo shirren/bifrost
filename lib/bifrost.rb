@@ -1,3 +1,4 @@
+require 'bifrost/bus'
 require 'bifrost/entity'
 require 'bifrost/message'
 require 'bifrost/topic'
@@ -22,6 +23,11 @@ module Bifrost
     topic.save
     topic.add_subscriber(Bifrost::Subscriber.new(subscriber))
     topic
+  end
+
+  # Get an instance of the bus
+  def self.bus
+    Bifrost::Bus.new
   end
 
   # Creates a manager instance
