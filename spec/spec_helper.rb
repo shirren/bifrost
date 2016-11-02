@@ -12,7 +12,7 @@ RSpec.configure do |config|
   Dotenv.load('.env.test')
 
   # All specs use this pre-defined namespace in Azure
-  Azure.sb_namespace = ENV['NAMESPACE']
+  Azure.sb_namespace = ENV['AZURE_BUS_NAMESPACE']
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

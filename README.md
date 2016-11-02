@@ -31,7 +31,7 @@ bus and how it works please refer to this [article](https://azure.microsoft.com/
 
 To begin using this gem we need to start by setting some environment variables. The gem in development and
 test environments supports .env files (i.e. .env.test and .env.development etc). The environment variables that
-require to be set prior to using the gem are; NAMESPACE, KEY_NAME and KEY_SECRET. The values for these variables
+require to be set prior to using the gem are; `AZURE_BUS_NAMESPACE`, `AZURE_BUS_KEY_NAME` and `AZURE_BUS_KEY_SECRET`. The values for these variables
 can be obtained from your Azure management portal. For more information on how to obtain these values for your
 service bus please refer to this [article](https://azure.microsoft.com/en-us/documentation/articles/service-bus-authentication-and-authorization/).
 
