@@ -13,21 +13,12 @@ module Bifrost
       super()
     end
 
-    # If the topic has been defined this method returns true, if not
-    # it returns false
-    def exists?
-      @bus.topics.each do |topic|
-        return true if topic.name == name
-      end
-      false
-    end
-
     # If a topic has not been defined we can save it, so it becomes defined
     def save
       if exists?
         false
       else
-        @bus.interface.create_topic(name)
+        @bus.create_topic(name)
         true
       end
     end
@@ -35,7 +26,7 @@ module Bifrost
     # If a topic is defined, we can remove the definition
     def delete
       if exists?
-        @bus.interface.delete_topic(name)
+        @bus.delete_topic(name)
         true
       else
         false
@@ -70,6 +61,16 @@ module Bifrost
       else
         false
       end
+    end
+
+    def ==(another_topic)
+      self.name == another_topic.name && self.class == another_topic.class
+    end
+
+    # Topics are self aware, and know if they exist or not, but only with the help
+    # of the almighty bus
+    def exists?
+      @bus.topic_exists?(self)
     end
   end
 end

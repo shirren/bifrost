@@ -1,4 +1,5 @@
 require 'azure'
+require 'bifrost'
 require 'byebug'
 require 'dotenv'
 require 'simplecov'

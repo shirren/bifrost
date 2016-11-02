@@ -5,7 +5,6 @@ describe Bifrost::Topic do
   subject(:topic) { Bifrost::Topic.new('topic_name') }
 
   it { is_expected.to respond_to(:name) }
-  it { is_expected.to respond_to(:exists?) }
   it { is_expected.to respond_to(:save) }
   it { is_expected.to respond_to(:delete) }
   it { is_expected.to respond_to(:add_subscriber) }
@@ -16,11 +15,23 @@ describe Bifrost::Topic do
     expect { invalid_topic.save }.to raise_error(TypeError)
   end
 
-  context 'for an undefined topic' do
-    it 'should return false for defined?' do
-      expect(topic.exists?).to be_falsey
+  describe 'equality' do
+    it 'should return true for the same object' do
+      expect(topic).to eq(topic)
     end
 
+    it 'should return true for topics with the same name' do
+      same_topic = Bifrost::Topic.new('topic_name')
+      expect(same_topic).to eq(topic)
+    end
+
+    it 'should return false for topics with disimilar names' do
+      different_topic = Bifrost::Topic.new('different_topic_name')
+      expect(different_topic).not_to eq(topic)
+    end
+  end
+
+  context 'for an undefined topic' do
     it 'should persist the topic' do
       new_topic = Bifrost::Topic.new('new_topic_name')
       expect(new_topic.save).to be_truthy
@@ -46,17 +57,15 @@ describe Bifrost::Topic do
     let(:new_topic) { Bifrost::Topic.new('test_donotdelete') }
 
     before(:all) do
+      bus = Bifrost::Bus.new
       tp = Bifrost::Topic.new('test_donotdelete')
-      tp.save unless tp.exists?
+      tp.save unless bus.topic_exists?(tp)
     end
 
     after(:all) do
+      bus = Bifrost::Bus.new
       tp = Bifrost::Topic.new('test_donotdelete')
-      tp.delete if tp.exists?
-    end
-
-    it 'should return true for defined?' do
-      expect(new_topic.exists?).to be_truthy
+      tp.delete if bus.topic_exists?(tp)
     end
 
     it 'should return false for save' do
