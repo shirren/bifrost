@@ -9,7 +9,7 @@ module Bifrost
 
   # The patch version of Bifrost, updated only for bug fixes from the last
   # feature release.
-  PATCH_VERSION = 2
+  PATCH_VERSION = 3
 
   # The full version as a string.
   VERSION = "#{MAJOR_VERSION}.#{MINOR_VERSION}.#{PATCH_VERSION}".freeze
