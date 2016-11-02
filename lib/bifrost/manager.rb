@@ -25,7 +25,7 @@ module Bifrost
       if topic.nil? || subscriber.nil? || proc.nil?
         raise InvalidWorkerDefinitionError, 'Invalid worker'
       else
-        @supervisor = Worker.supervise(as: Worker.handle(topic, subscriber), args: [topic, subscriber, proc])
+        Worker.supervise(as: Worker.handle(topic, subscriber), args: [topic, subscriber, proc])
       end
     end
 

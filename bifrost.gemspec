@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Bifrost::VERSION
   s.authors     = ['Shirren Premaratne']
   s.email       = ['shirren@filmpond.com']
-  s.homepage    = 'https://github.com/filmpond/bifrost'
+  s.homepage    = 'https://github.com/shirren/bifrost'
   s.summary     = 'Bifrost is a pub/sub wrapper library which uses the Azure message bus and actors.'
   s.description = 'Bifrost is a pub/sub wrapper library which uses Azure message bus and actors.'
   s.files       = Dir['{app,config,db,lib}/**/*', 'Rakefile', 'README.md']
