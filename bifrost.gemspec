@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.test_files  = Dir['spec/**/*']
   s.licenses    = ['MIT']
 
-  s.required_ruby_version = ">= 2.0"
+  s.required_ruby_version = '>= 2.0'
 
   s.add_runtime_dependency 'azure', '~> 0.7.6'
   s.add_runtime_dependency 'celluloid', '~> 0.17.3'

@@ -15,6 +15,11 @@ describe Bifrost::Topic do
     expect { invalid_topic.save }.to raise_error(TypeError)
   end
 
+  it 'should not accept names with spaces in them' do
+    invalid_topic = Bifrost::Topic.new('topic name')
+    expect { invalid_topic.save }.to raise_error(URI::InvalidURIError)
+  end
+
   describe 'equality' do
     it 'should return true for the same object' do
       expect(topic).to eq(topic)
@@ -56,16 +61,10 @@ describe Bifrost::Topic do
   context 'for a defined topic' do
     let(:new_topic) { Bifrost::Topic.new('test_donotdelete') }
 
-    before(:all) do
+    before(:each) do
       bus = Bifrost::Bus.new
-      tp = Bifrost::Topic.new('test_donotdelete')
-      tp.save unless bus.topic_exists?(tp)
-    end
-
-    after(:all) do
-      bus = Bifrost::Bus.new
-      tp = Bifrost::Topic.new('test_donotdelete')
-      tp.delete if bus.topic_exists?(tp)
+      bus.topics.each(&:delete)
+      new_topic.save
     end
 
     it 'should return false for save' do
@@ -88,10 +87,24 @@ describe Bifrost::Topic do
       expect(new_topic.add_subscriber(subscriber)).to be_truthy
       expect(new_topic.add_subscriber(subscriber)).to be_falsey
     end
-  end
 
-  it 'should not accept names with spaces in them' do
-    invalid_topic = Bifrost::Topic.new('topic name')
-    expect { invalid_topic.save }.to raise_error(URI::InvalidURIError)
+    context 'with no subscribers' do
+      it 'should return no subscribers' do
+        expect(new_topic.subscribers).to be_empty
+      end
+    end
+
+    context 'with subscribers' do
+      before(:each) do
+        subscriber_a = Bifrost::Subscriber.new('new_subscriber_a')
+        subscriber_b = Bifrost::Subscriber.new('new_subscriber_b')
+        new_topic.add_subscriber(subscriber_a)
+        new_topic.add_subscriber(subscriber_b)
+      end
+
+      it 'should return a list of it\'s subscribers' do
+        expect(new_topic.subscribers.size).to eq(2)
+      end
+    end
   end
 end

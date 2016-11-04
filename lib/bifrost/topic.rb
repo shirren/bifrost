@@ -33,6 +33,13 @@ module Bifrost
       end
     end
 
+    # This method returns a list of subscribers currently defined on the topic
+    def subscribers
+      @bus.interface.list_subscriptions(name).map do |s|
+        Subscriber.new(s.name)
+      end
+    end
+
     # A new subscriber can be added to a topic
     def add_subscriber(subscriber)
       if exists?
@@ -63,8 +70,8 @@ module Bifrost
       end
     end
 
-    def ==(another_topic)
-      self.name == another_topic.name && self.class == another_topic.class
+    def ==(other)
+      name == other.name && self.class == other.class
     end
 
     # Topics are self aware, and know if they exist or not, but only with the help

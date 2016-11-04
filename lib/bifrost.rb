@@ -9,7 +9,6 @@ require 'celluloid'
 
 # Bifrost is a pub/sub gem built on top of the Azure MessageBus system
 module Bifrost
-
   # Workers and the infrastructure can log using the standard level of granularity affored to any
   # standard logger (i.e. info, debug, error levels etc)
   def self.logger=(log_provider)
