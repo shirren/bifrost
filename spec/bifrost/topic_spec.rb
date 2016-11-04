@@ -62,8 +62,6 @@ describe Bifrost::Topic do
     let(:new_topic) { Bifrost::Topic.new('test_donotdelete') }
 
     before(:each) do
-      bus = Bifrost::Bus.new
-      bus.topics.each(&:delete)
       new_topic.save
     end
 

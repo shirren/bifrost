@@ -44,4 +44,16 @@ RSpec.configure do |config|
   # inherited by the metadata hash of host groups and examples, rather than
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
+
+  # Clear the bifrost before running each spec
+  config.before(:example) do
+    bus = Bifrost::Bus.new
+    bus.topics.each(&:delete)
+  end
+
+  # Clear the bifrost after running specs
+  config.after(:suite) do
+    bus = Bifrost::Bus.new
+    bus.topics.each(&:delete)
+  end
 end
