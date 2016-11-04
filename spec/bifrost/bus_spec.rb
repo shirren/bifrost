@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Bifrost::Bus do
-  let(:bus)   { Bifrost::Bus.new }
+  let(:bus) { Bifrost::Bus.new }
 
   context 'for an undefined topic' do
     it 'should return false for defined?' do
