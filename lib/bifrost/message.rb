@@ -17,23 +17,38 @@ module Bifrost
     end
 
     # A message can be posted to a particular topic
-    def post_to(topic)
+    def publish(topic)
       if topic.exists?
-        message = create_brokered_message
-        @bus.interface.send_topic_message(topic.name, message)
-        update_message_state_to_delivered(message)
+        send_message(topic, create_brokered_message)
         true
       else
         false
       end
     end
 
+    # A message can be posted to a particular topic, if the message is succssfully delivered
+    # we return a unique identifier for the message
+    def publish!(topic)
+      if topic.exists?
+        send_message(topic, create_brokered_message)
+        message_id
+      else
+        raise Bifrost::Exceptions::MessageDeliveryError, "Could not post message to #{topic}"
+      end
+    end
+
     private
+
+    # Create the message and attempt to deliver It
+    def send_message(topic, message)
+      @bus.interface.send_topic_message(topic.name, message)
+      update_message_state_to_delivered(message)
+    end
 
     # Create the brokered message
     def create_brokered_message
       message = Azure::ServiceBus::BrokeredMessage.new(subject, message: body)
-      message.correlation_id = SecureRandom.hex
+      message.correlation_id = SecureRandom.uuid
       message
     end
 

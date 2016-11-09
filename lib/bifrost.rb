@@ -5,6 +5,12 @@ require 'bifrost/topic'
 require 'bifrost/subscriber'
 require 'bifrost/manager'
 require 'bifrost/worker'
+
+require 'bifrost/exceptions/duplicate_subscriber_error'
+require 'bifrost/exceptions/invalid_worker_definition_error'
+require 'bifrost/exceptions/message_delivery_error'
+require 'bifrost/exceptions/unsupported_lambda_error'
+
 require 'celluloid'
 
 # Bifrost is a pub/sub gem built on top of the Azure MessageBus system

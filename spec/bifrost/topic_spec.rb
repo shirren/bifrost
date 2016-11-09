@@ -15,6 +15,10 @@ describe Bifrost::Topic do
     expect { invalid_topic.save }.to raise_error(TypeError)
   end
 
+  it 'should have a friendly name' do
+    expect(topic.to_s).to eq('topic_name')
+  end
+
   it 'should not accept names with spaces in them' do
     invalid_topic = Bifrost::Topic.new('topic name')
     expect { invalid_topic.save }.to raise_error(URI::InvalidURIError)
@@ -37,10 +41,13 @@ describe Bifrost::Topic do
   end
 
   context 'for an undefined topic' do
-    it 'should persist the topic' do
-      new_topic = Bifrost::Topic.new('new_topic_name')
-      expect(new_topic.save).to be_truthy
-      expect(new_topic.delete).to be_truthy
+
+    describe 'save' do
+      it 'should persist the topic and return a binary value' do
+        new_topic = Bifrost::Topic.new('new_topic_name')
+        expect(new_topic.save).to be_truthy
+        expect(new_topic.delete).to be_truthy
+      end
     end
 
     it 'should return false for delete' do

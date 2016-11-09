@@ -79,5 +79,9 @@ module Bifrost
     def exists?
       @bus.topic_exists?(self)
     end
+
+    def to_s
+      name
+    end
   end
 end

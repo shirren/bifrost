@@ -8,7 +8,8 @@ describe Bifrost::Message do
   it { is_expected.to respond_to(:status) }
   it { is_expected.to respond_to(:message_id) }
   it { is_expected.to respond_to(:body) }
-  it { is_expected.to respond_to(:post_to) }
+  it { is_expected.to respond_to(:publish) }
+  it { is_expected.to respond_to(:publish!) }
 
   context 'which is initialized' do
     it 'should be in an undelivered status' do
@@ -21,18 +22,39 @@ describe Bifrost::Message do
     expect(new_message).to_not be_nil
   end
 
-  it 'should be postable to a valid topic' do
-    topic = Bifrost::Topic.new('valid-topic')
-    topic.save
-    topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
-    expect(message.post_to(topic)).to be_truthy
-    expect(message.status).to eq(:delivered)
-    expect(message.message_id).not_to be_nil
-    topic.delete
+  describe 'publish' do
+    it 'should publish to a valid topic' do
+      topic = Bifrost::Topic.new('valid-topic')
+      topic.save
+      topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
+      expect(message.publish(topic)).to be_truthy
+      expect(message.status).to eq(:delivered)
+      expect(message.message_id).not_to be_nil
+      topic.delete
+    end
+
+    it 'should not be postable to an invalid topic' do
+      topic = Bifrost::Topic.new('invalid-topic') # A topic that is neither saved, nor with no subscribers is semantically invalid
+      expect(message.publish(topic)).to be_falsey
+    end
   end
 
-  it 'should not be postable to an invalid topic' do
-    topic = Bifrost::Topic.new('invalid-topic') # A topic that is neither saved, nor with no subscribers is semantically invalid
-    expect(message.post_to(topic)).to be_falsey
+  describe 'publish!' do
+    it 'should publish to a valid topic and return the message id' do
+      topic = Bifrost::Topic.new('valid-topic')
+      topic.save
+      topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
+      response = message.publish!(topic)
+      expect(response).not_to be_nil
+      expect(message.status).to eq(:delivered)
+      expect(message.message_id).not_to be_nil
+      expect(response).to eq(message.message_id)
+      topic.delete
+    end
+
+    it 'should raise an exception upon publish to an invalid topic' do
+      topic = Bifrost::Topic.new('invalid-topic')
+      expect { message.publish!(topic) }.to raise_error(Bifrost::Exceptions::MessageDeliveryError)
+    end
   end
 end

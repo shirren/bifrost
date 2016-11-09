@@ -56,31 +56,29 @@ subscriber = Bifrost::Subscriber.new('new_subscriber')
 topic.add_subscriber(subscriber)
 ```
 
-Each topic can only have a unique list of subscribers, a subscriber cannot be added to a topic more than once. When a subscriber is added to
-a topic this function will return a true or false indicating success of the add.
+Each topic can only have a unique list of subscribers, a subscriber cannot be added to a topic more than once. When a subscriber is added to a topic this function will return a true or false indicating success of the add.
 
 To post a message to a topic;
 
 ```ruby
 topic = Bifrost::Topic.new('topic_name')
 message = Bifrost::Message.new(content: 'some data')
-message.post_to(topic)
+message.publish(topic)
 ```
 
-This function returns a `true` or `false` indicating the success of the message delivery. This method is synchronous. Each message has an
-identifier which gets sets upon successful delivery only.
+This function returns a `true` or `false` indicating the success of the message delivery. This method is synchronous. Each message has an identifier which gets sets upon successful delivery only.
 
 A message can also be optionally published with a subject;
 
 ```ruby
 topic = Bifrost::Topic.new('topic_name')
 message = Bifrost::Message.new(content: 'some data', 'message subject')
-message.post_to(topic)
+message.publish(topic)
 ```
 
-Subscribers in the Bifrost are [actors](http://http://doc.akka.io/docs/akka/2.4/general/actors.html), these actors run in
-their own threads. At present the Bifrost does not support thread pools, this is something we are investigating and are
-hoping to add at some point. In the Bifrost each actor is referred to as a `worker`. A worker is designed to receive
+An alternative method named `publish!` also exists. This method raises an error is a message cannot be delivered. The error raised is `Bifrost::Exceptions::MessageDeliveryError`. If the message is successfully delivered with the method `publish!`, the messages `UUID` is returned in the call.
+
+Subscribers in the Bifrost are [actors](http://http://doc.akka.io/docs/akka/2.4/general/actors.html), these actors run in their own threads. At present the Bifrost does not support thread pools, this is something we are investigating and are hoping to add at some point. In the Bifrost each actor is referred to as a `worker`. A worker is designed to receive
 messages published to a particular topic with a specific subscriber in mind (refer to the fan-out comment earlier).
 
 Workers are added to the Bifrost via the manager. The manager is what activates the workers in the Bifrost environment.
