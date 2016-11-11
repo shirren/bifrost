@@ -1,4 +1,4 @@
-require 'Azure'
+require 'azure'
 
 module Bifrost
   # Types that require access to the message bus should inherit this type. We've chosen

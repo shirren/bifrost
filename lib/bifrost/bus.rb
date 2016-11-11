@@ -1,4 +1,4 @@
-require 'Azure'
+require 'azure'
 
 module Bifrost
   # This type represents the Bifrost as a managed entity
