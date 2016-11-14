@@ -76,7 +76,7 @@ message = Bifrost::Message.new(content: 'some data', 'message subject')
 message.publish(topic)
 ```
 
-An alternative method named `publish!` also exists. This method raises an error is a message cannot be delivered. The error raised is `Bifrost::Exceptions::MessageDeliveryError`. If the message is successfully delivered with the method `publish!`, the messages `UUID` is returned in the call.
+An alternative method named `publish!` also exists. This method raises an error is a message cannot be delivered. The error raised is `Bifrost::Exceptions::MessageDeliveryError`. If the message is successfully delivered with the method `publish!`, the messages `UUID` is returned in the call. If a message is re-delivered it's message identifier changes. In the Bifrost each message even if it contains duplicate information is viewed as a different/unique message.
 
 Subscribers in the Bifrost are [actors](http://http://doc.akka.io/docs/akka/2.4/general/actors.html), these actors run in their own threads. At present the Bifrost does not support thread pools, this is something we are investigating and are hoping to add at some point. In the Bifrost each actor is referred to as a `worker`. A worker is designed to receive
 messages published to a particular topic with a specific subscriber in mind (refer to the fan-out comment earlier).

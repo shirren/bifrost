@@ -52,6 +52,20 @@ describe Bifrost::Message do
       topic.delete
     end
 
+    it 'should update the message id on a replublish of the same messsage' do
+      topic = Bifrost::Topic.new('valid-topic')
+      topic.save
+      topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
+      response = message.publish!(topic)
+      expect(response).not_to be_nil
+      expect(message.status).to eq(:delivered)
+      expect(message.message_id).not_to be_nil
+      expect(response).to eq(message.message_id)
+      upd_response = message.publish!(topic)
+      expect(upd_response).not_to eq(response)
+      topic.delete
+    end
+
     it 'should raise an exception upon publish to an invalid topic' do
       topic = Bifrost::Topic.new('invalid-topic')
       expect { message.publish!(topic) }.to raise_error(Bifrost::Exceptions::MessageDeliveryError)

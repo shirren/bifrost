@@ -55,7 +55,7 @@ module Bifrost
     # Update the status of the message post delivery
     def update_message_state_to_delivered(message)
       @status = :delivered
-      @message_id ||= message.correlation_id
+      @message_id = message.correlation_id
     end
   end
 end
