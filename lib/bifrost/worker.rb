@@ -48,7 +48,7 @@ module Bifrost
 
     # A worker can tell you what it's friendly name will be, this is in order for supervision
     def self.handle(topic, subscriber)
-      "#{topic.downcase}#{subscriber.downcase}"
+      "#{topic.downcase}--#{subscriber.downcase}"
     end
 
     private

@@ -14,12 +14,12 @@ describe Bifrost::Worker do
   end
 
   it 'should have a friendly string name' do
-    expect(worker.to_s).to eq("#{worker.topic}#{worker.subscriber}")
+    expect(worker.to_s).to eq("#{worker.topic}--#{worker.subscriber}")
   end
 
   it 'should downcase the friendly name' do
     another_worker = Bifrost::Worker.new('toPic', 'subScriber', cb)
-    expect(another_worker.to_s).to eq("#{another_worker.topic.downcase}#{another_worker.subscriber.downcase}")
+    expect(another_worker.to_s).to eq("#{another_worker.topic.downcase}--#{another_worker.subscriber.downcase}")
   end
 
   it 'should have a friendly symbol name' do
