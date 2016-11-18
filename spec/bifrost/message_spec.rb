@@ -7,6 +7,7 @@ describe Bifrost::Message do
   it { is_expected.to respond_to(:subject) }
   it { is_expected.to respond_to(:status) }
   it { is_expected.to respond_to(:message_id) }
+  it { is_expected.to respond_to(:resource_id) }
   it { is_expected.to respond_to(:body) }
   it { is_expected.to respond_to(:publish) }
   it { is_expected.to respond_to(:publish!) }

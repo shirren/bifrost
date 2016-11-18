@@ -55,10 +55,11 @@ module Bifrost
 
     # Actual processing of the message
     def read_message
-      message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
-      if message
-        callback.call(message.properties['message'])
-        @bus.interface.delete_subscription_message(message)
+      raw_message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
+      if raw_message
+        message = Bifrost::Message.new(raw_message)
+        callback.call(message)
+        @bus.interface.delete_subscription_message(raw_message)
       end
     end
   end

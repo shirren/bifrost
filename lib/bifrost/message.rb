@@ -7,12 +7,18 @@ module Bifrost
   class Message < Entity
     attr_reader :subject, :body, :status, :message_id
 
+    alias_method :resource_id, :message_id
+
     # A message must have a valid subject and body. The service
     # bus is initialised in the Entity class
     def initialize(body, subject = nil)
       @subject = subject || SecureRandom.base64
-      @body ||= body
-      @status ||= :undelivered
+      if body.is_a?(Azure::ServiceBus::BrokeredMessage)
+        merge(body)
+      else
+        @body ||= body
+        @status ||= :undelivered
+      end
       super()
     end
 
@@ -38,6 +44,18 @@ module Bifrost
     end
 
     private
+
+    # Merges this message with the required properties of the raw Azure brokered message
+    # The sender might send a message other than JSON in which case we just send the raw data along
+    def merge(raw_message)
+      @status = :delivered
+      begin
+        @body = JSON.parse(raw_message.properties['message'])
+      rescue JSON::ParserError
+        @body = raw_message.properties['message']
+      end
+      @message_id = raw_message.correlation_id
+    end
 
     # Create the message and attempt to deliver It
     def send_message(topic, message)
