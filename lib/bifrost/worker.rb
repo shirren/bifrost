@@ -21,16 +21,18 @@ module Bifrost
       @subscriber ||= subscriber
       @callback ||= callback
       super()
-      info("Worker #{to_sym} starting up...")
+      info("Worker #{self} starting up...")
       publish('worker_ready', topic, subscriber)
     end
 
     # This method starts the actor, which runs in an infinite loop. This means the worker should
     # not terminate, but if it does, the supervisor will make sure it restarts
     def run
-      info("Worker #{to_sym} running...")
+      info("Worker #{self} running...")
       loop do
+        info("Worker #{self} waking up...") if Bifrost.debug?
         read_message
+        info("Worker #{self} going to sleep...") if Bifrost.debug?
         sleep(ENV['QUEUE_DELAY'] || 10)
       end
     end
@@ -57,9 +59,12 @@ module Bifrost
     def read_message
       raw_message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
       if raw_message
+        info("Worker #{self} picked up message #{raw_message}") if Bifrost.debug?
         message = Bifrost::Message.new(raw_message)
         callback.call(message)
         @bus.interface.delete_subscription_message(raw_message)
+      else
+        info("Worker #{self} no message...") if Bifrost.debug?
       end
     end
   end

@@ -1,16 +1,19 @@
 require 'azure'
-require 'bifrost'
 require 'byebug'
 require 'dotenv'
 require 'simplecov'
+
+# Load environment variables for Azure
+Dotenv.load('.env.test')
+
+# We need to load the environment before the bifrost
+require 'bifrost'
 
 SimpleCov.start do
   add_filter '/spec/'
 end
 
 RSpec.configure do |config|
-  # Load environment variables for Azure
-  Dotenv.load('.env.test')
 
   # All specs use this pre-defined namespace in Azure
   Azure.sb_namespace = ENV['AZURE_BUS_NAMESPACE']

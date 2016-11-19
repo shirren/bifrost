@@ -11,7 +11,9 @@ require 'bifrost/exceptions/invalid_worker_definition_error'
 require 'bifrost/exceptions/message_delivery_error'
 require 'bifrost/exceptions/unsupported_lambda_error'
 
-require 'celluloid'
+# Set Celluloid's debug mode to true if the Bifrost is set to report as well
+require 'celluloid/debug' if ENV['BIFROST_DEBUG']
+require 'celluloid/current'
 
 # Bifrost is a pub/sub gem built on top of the Azure MessageBus system
 module Bifrost
@@ -19,6 +21,12 @@ module Bifrost
   # standard logger (i.e. info, debug, error levels etc)
   def self.logger=(log_provider)
     Celluloid.logger = log_provider
+  end
+
+  # Helper method for other types in the Bifrost to know when logging
+  # is turned on
+  def self.debug?
+    ENV['BIFROST_DEBUG']
   end
 
   # Simple utlity that creates a topic and a single subscriber for the given

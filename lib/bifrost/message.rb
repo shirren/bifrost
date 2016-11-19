@@ -8,6 +8,7 @@ module Bifrost
     attr_reader :subject, :body, :status, :message_id
 
     alias_method :resource_id, :message_id
+    alias_method :id, :message_id
 
     # A message must have a valid subject and body. The service
     # bus is initialised in the Entity class
@@ -41,6 +42,11 @@ module Bifrost
       else
         raise Bifrost::Exceptions::MessageDeliveryError, "Could not post message to #{topic}"
       end
+    end
+
+    # A message when serialised to a string just renders the messag identifier
+    def to_s
+      id
     end
 
     private
