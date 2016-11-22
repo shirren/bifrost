@@ -2,9 +2,9 @@ require 'spec_helper'
 require 'bifrost'
 
 describe Bifrost::Message do
-  subject(:message) { Bifrost::Message.new({ content: 'some data' }, 'subscriber_name') }
+  subject(:message) { Bifrost::Message.new({ content: 'some data' }, { app_name: 'bifrost' }) }
 
-  it { is_expected.to respond_to(:subject) }
+  it { is_expected.to respond_to(:meta) }
   it { is_expected.to respond_to(:status) }
   it { is_expected.to respond_to(:message_id) }
   it { is_expected.to respond_to(:resource_id) }
@@ -18,11 +18,6 @@ describe Bifrost::Message do
     end
   end
 
-  it 'should be able to auto generate a subject' do
-    new_message = Bifrost::Message.new(content: 'some data')
-    expect(new_message).to_not be_nil
-  end
-
   describe 'publish' do
     it 'should publish to a valid topic' do
       topic = Bifrost::Topic.new('valid-topic')
@@ -31,6 +26,15 @@ describe Bifrost::Message do
       expect(message.publish(topic)).to be_truthy
       expect(message.status).to eq(:delivered)
       expect(message.message_id).not_to be_nil
+      topic.delete
+    end
+
+    it 'should publish a primitive in its payload' do
+      topic = Bifrost::Topic.new('valid-topic')
+      topic.save
+      topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
+      msg = Bifrost::Message.new(1, { app_name: 'bifrost' })
+      expect(msg.publish(topic)).to be_truthy
       topic.delete
     end
 

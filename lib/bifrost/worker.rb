@@ -57,6 +57,7 @@ module Bifrost
 
     # Actual processing of the message
     def read_message
+      byebug
       raw_message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
       if raw_message
         info("Worker #{self} picked up message #{raw_message}") if Bifrost.debug?

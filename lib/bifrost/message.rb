@@ -5,15 +5,15 @@ module Bifrost
   # A message is a letter that we send to a topic. It must contain a subject and body
   # The receiver can process both fields on receipt of the message
   class Message < Entity
-    attr_reader :subject, :body, :status, :message_id
+    attr_reader :meta, :body, :status, :message_id
 
     alias_method :resource_id, :message_id
     alias_method :id, :message_id
 
     # A message must have a valid subject and body. The service
     # bus is initialised in the Entity class
-    def initialize(body, subject = nil)
-      @subject = subject || SecureRandom.base64
+    def initialize(body, meta = {})
+      @meta = meta
       if body.is_a?(Azure::ServiceBus::BrokeredMessage)
         merge(body)
       else
@@ -56,11 +56,12 @@ module Bifrost
     def merge(raw_message)
       @status = :delivered
       begin
-        @body = JSON.parse(raw_message.properties['message'])
+        @meta = raw_message.properties
+        @body = JSON.parse(raw_message.body)
       rescue JSON::ParserError
-        @body = raw_message.properties['message']
+        @body = raw_message
       end
-      @message_id = raw_message.correlation_id
+      @message_id = raw_message.message_id
     end
 
     # Create the message and attempt to deliver It
@@ -69,17 +70,20 @@ module Bifrost
       update_message_state_to_delivered(message)
     end
 
-    # Create the brokered message
+    # Create the brokered message, note that the Bifrost message supports native
+    # ruby hashes, but during the transport these messages are converted to JSON
+    # strings
     def create_brokered_message
-      message = Azure::ServiceBus::BrokeredMessage.new(subject, message: body)
-      message.correlation_id = SecureRandom.uuid
+      payload = body.respond_to?(:to_json) ? body.to_json : body
+      message = Azure::ServiceBus::BrokeredMessage.new(payload, meta)
+      message.message_id = SecureRandom.uuid
       message
     end
 
     # Update the status of the message post delivery
     def update_message_state_to_delivered(message)
       @status = :delivered
-      @message_id = message.correlation_id
+      @message_id = message.message_id
     end
   end
 end

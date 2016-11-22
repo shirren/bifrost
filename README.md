@@ -66,13 +66,13 @@ message = Bifrost::Message.new(content: 'some data')
 message.publish(topic)
 ```
 
-This function returns a `true` or `false` indicating the success of the message delivery. This method is synchronous. Each message has an identifier which gets sets upon successful delivery only.
+This function returns a `true` or `false` indicating the success of the message delivery. This method is synchronous. Each message has an identifier which gets sets upon successful delivery only. A Bifrost message can be either a primitive type or a ruby hash.
 
-A message can also be optionally published with a subject;
+A message can also be optionally published with meta data or properties, this data structure is a hash.
 
 ```ruby
 topic = Bifrost::Topic.new('topic_name')
-message = Bifrost::Message.new(content: 'some data', 'message subject')
+message = Bifrost::Message.new({ content: 'some data' }, { app_name: 'bifrost' })
 message.publish(topic)
 ```
 
