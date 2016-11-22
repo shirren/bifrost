@@ -26,7 +26,6 @@ describe Bifrost::Message do
       expect(message.publish(topic)).to be_truthy
       expect(message.status).to eq(:delivered)
       expect(message.message_id).not_to be_nil
-      topic.delete
     end
 
     it 'should publish a primitive in its payload' do
@@ -35,7 +34,6 @@ describe Bifrost::Message do
       topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
       msg = Bifrost::Message.new(1, { app_name: 'bifrost' })
       expect(msg.publish(topic)).to be_truthy
-      topic.delete
     end
 
     it 'should not be postable to an invalid topic' do
@@ -54,7 +52,6 @@ describe Bifrost::Message do
       expect(message.status).to eq(:delivered)
       expect(message.message_id).not_to be_nil
       expect(response).to eq(message.message_id)
-      topic.delete
     end
 
     it 'should update the message id on a replublish of the same messsage' do
@@ -68,7 +65,6 @@ describe Bifrost::Message do
       expect(response).to eq(message.message_id)
       upd_response = message.publish!(topic)
       expect(upd_response).not_to eq(response)
-      topic.delete
     end
 
     it 'should raise an exception upon publish to an invalid topic' do

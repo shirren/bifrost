@@ -16,7 +16,6 @@ describe Bifrost::Bus do
       topic.save
       dup_topic = Bifrost::Topic.new('bus-topic')
       expect(bus.topic_exists?(dup_topic)).to be_truthy
-      topic.delete
     end
   end
 end
