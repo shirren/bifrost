@@ -41,7 +41,6 @@ describe Bifrost::Topic do
   end
 
   context 'for an undefined topic' do
-
     describe 'save' do
       it 'should persist the topic and return a binary value' do
         new_topic = Bifrost::Topic.new('new_topic_name')

@@ -7,8 +7,8 @@ module Bifrost
   class Message < Entity
     attr_reader :meta, :body, :status, :message_id
 
-    alias_method :resource_id, :message_id
-    alias_method :id, :message_id
+    alias resource_id message_id
+    alias id message_id
 
     # A message must have a valid subject and body. The service
     # bus is initialised in the Entity class

@@ -14,7 +14,6 @@ SimpleCov.start do
 end
 
 RSpec.configure do |config|
-
   # All specs use this pre-defined namespace in Azure
   Azure.sb_namespace = ENV['AZURE_BUS_NAMESPACE']
 

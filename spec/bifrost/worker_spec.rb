@@ -31,7 +31,7 @@ describe Bifrost::Worker do
     topic.save
     subscriber = Bifrost::Subscriber.new('subscriber')
     topic.add_subscriber(subscriber)
-    msg = Bifrost::Message.new([item1: { data: 2 }, item2: { more_data: 3 }], { app_name: 'bifrost' })
+    msg = Bifrost::Message.new([item1: { data: 2 }, item2: { more_data: 3 }], app_name: 'bifrost')
     msg.publish(topic)
     expect(msg.status).to eq(:delivered)
     expect(msg.message_id).not_to be_nil

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'bifrost'
 
 describe Bifrost::Message do
-  subject(:message) { Bifrost::Message.new({ content: 'some data' }, { app_name: 'bifrost' }) }
+  subject(:message) { Bifrost::Message.new({ content: 'some data' }, app_name: 'bifrost') }
 
   it { is_expected.to respond_to(:meta) }
   it { is_expected.to respond_to(:status) }
@@ -32,7 +32,7 @@ describe Bifrost::Message do
       topic = Bifrost::Topic.new('valid-topic')
       topic.save
       topic.add_subscriber(Bifrost::Subscriber.new('new_subscriber'))
-      msg = Bifrost::Message.new(1, { app_name: 'bifrost' })
+      msg = Bifrost::Message.new(1, app_name: 'bifrost')
       expect(msg.publish(topic)).to be_truthy
     end
 
