@@ -12,14 +12,15 @@ module Bifrost
     include Celluloid::Internals::Logger
     include Celluloid::Notifications
 
-    attr_reader :topic, :subscriber, :callback
+    attr_reader :topic, :subscriber, :callback, :options
 
     # Initialise the worker/actor. This actually starts the worker by implicitly calling the run method
-    def initialize(topic, subscriber, callback)
+    def initialize(topic, subscriber, callback, options = {})
       raise Bifrost::Exceptions::UnsupportedLambdaError, 'callback is not a proc' unless callback.respond_to?(:call)
       @topic ||= topic
       @subscriber ||= subscriber
       @callback ||= callback
+      @options ||= options
       super()
       info("Worker #{self} starting up...")
       publish('worker_ready', topic, subscriber)
@@ -61,8 +62,13 @@ module Bifrost
       if raw_message
         info("Worker #{self} picked up message #{raw_message}") if Bifrost.debug?
         message = Bifrost::Message.new(raw_message)
-        callback.call(message)
-        @bus.interface.delete_subscription_message(raw_message)
+        if options[:non_repeatable]
+          @bus.interface.delete_subscription_message(raw_message)
+          callback.call(message)
+        else
+          callback.call(message)
+          @bus.interface.delete_subscription_message(raw_message)
+        end
       elsif Bifrost.debug?
         info("Worker #{self} no message...")
       end

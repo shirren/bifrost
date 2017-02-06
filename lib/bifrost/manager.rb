@@ -21,11 +21,11 @@ module Bifrost
 
     # A supervised worker can be added to the current collection of supervised workers
     # this also starts the actor
-    def add(topic, subscriber, proc)
+    def add(topic, subscriber, proc, options = {})
       if topic.nil? || subscriber.nil? || proc.nil?
         raise InvalidWorkerDefinitionError, 'Invalid worker'
       else
-        Worker.supervise(as: Worker.handle(topic, subscriber), args: [topic, subscriber, proc])
+        Worker.supervise(as: Worker.handle(topic, subscriber), args: [topic, subscriber, proc, append_default_options(options)])
       end
     end
 
@@ -58,6 +58,13 @@ module Bifrost
     end
 
     private
+
+    ##
+    # Create default options hash if custom options do not exit
+    def append_default_options(custom_options)
+      options = { non_repeatable: false }
+      options.merge(custom_options)
+    end
 
     # Retrieve a worker through the supervisory structure, this can take a while as the worker might
     # be going through a restart procedure by the actor framework
