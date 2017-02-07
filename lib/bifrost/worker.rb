@@ -34,7 +34,7 @@ module Bifrost
         info("Worker #{self} waking up...") if Bifrost.debug?
         read_message
         info("Worker #{self} going to sleep...") if Bifrost.debug?
-        sleep(ENV['QUEUE_DELAY'] || 10)
+        sleep(ENV['QUEUE_DELAY'].to_i ? 0 : 10)
       end
     end
 
