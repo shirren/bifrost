@@ -107,12 +107,14 @@ to the failure, the worker then restarts after the failure.
 
 **We hope to introduce custom lambda functions in the future to support custom actions when a worker dies**
 
-#Is it any good?
+# Is it any good?
 
-We are currently [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this product in our production
-environment. We will no doubt find issues and rectify this over time.
+Yes.
 
-#Contributing
+We have been [dogfooding](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) this product in our production
+environment for a few months. We have rectified issues which we have found. If you do find an issue please raise open an issue.
+
+# Contributing
 
 We'd love to have you involved. Please read our [contributing guide]() for information on how to get stuck in.
 
@@ -125,7 +127,7 @@ These individuals have come up with the ideas and written the code that made thi
 1. Shirren Premaratne
 2. Leslie Fung
 
-#Licence
+# Licence
 
 This program is free software: you can redistribute it and/or modify it under the terms of the MIT License.
 
