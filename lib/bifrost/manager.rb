@@ -45,7 +45,7 @@ module Bifrost
     # in Celluloid, for this reason we need need to put a minor delay in the initialisation procedure
     def worker_ready(*args)
       info("Worker bootstrapping with #{args}...")
-      sleep(ENV['ACTOR_BOOTSTRAP_DELAY'] || 2) # TODO: Perhaps there is a better way?
+      sleep(ENV['BIFROST_BOOTSTRAP_DELAY'] || 2) # TODO: Perhaps there is a better way?
       worker = get_worker(args[1], args[2])
       if worker
         # Link the worker to the supervisor so if the worker misbehaves the supervisor is alerted

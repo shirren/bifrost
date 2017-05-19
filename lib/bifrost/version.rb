@@ -5,7 +5,7 @@ module Bifrost
   MAJOR_VERSION = 1
 
   # The minor version of Bifrost, updated for new feature releases.
-  MINOR_VERSION = 0
+  MINOR_VERSION = 1
 
   # The patch version of Bifrost, updated only for bug fixes from the last
   # feature release.

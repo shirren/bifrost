@@ -34,7 +34,7 @@ module Bifrost
         info("Worker #{self} waking up...") if Bifrost.debug?
         read_message
         info("Worker #{self} going to sleep...") if Bifrost.debug?
-        sleep(ENV['QUEUE_DELAY'].to_i ? 0 : 10)
+        sleep(ENV['BIFROST_WORKER_SLEEP'] || 10)
       end
     end
 
@@ -58,7 +58,7 @@ module Bifrost
 
     # Actual processing of the message
     def read_message
-      raw_message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['TIMEOUT'] || 10)
+      raw_message = @bus.interface.receive_subscription_message(topic, subscriber, timeout: ENV['BIFROST_TIMEOUT'] || 10)
       if raw_message
         info("Worker #{self} picked up message #{raw_message}") if Bifrost.debug?
         message = Bifrost::Message.new(raw_message)
